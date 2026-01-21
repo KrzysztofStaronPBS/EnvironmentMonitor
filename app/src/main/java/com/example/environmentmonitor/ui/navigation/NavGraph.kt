@@ -7,7 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.example.environmentmonitor.ui.screens.dashboard.DashboardScreen
-// import com.example.environmentmonitor.ui.screens.acquisition.AcquisitionScreen
+import com.example.environmentmonitor.ui.screens.acquisition.AcquisitionScreen
 
 @Composable
 fun NavGraph(navController: NavHostController) {
@@ -29,8 +29,11 @@ fun NavGraph(navController: NavHostController) {
 
         // ekran pomiaru (Akwizycja)
         composable<Screen.Acquisition> {
-            // tymczasowy placeholder, dopóki nie powstanie AcquisitionScreen
-            Text("Tu będzie ekran pomiaru")
+            AcquisitionScreen(
+                onNavigateBack = {
+                    navController.popBackStack()
+                }
+            )
         }
 
         // ekran szczegółów

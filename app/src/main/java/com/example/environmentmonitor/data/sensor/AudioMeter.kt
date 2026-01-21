@@ -12,20 +12,21 @@ class AudioMeter @Inject constructor(
     private var recorder: MediaRecorder? = null
 
     fun start() {
-        recorder = MediaRecorder(context).apply {
-            setAudioSource(MediaRecorder.AudioSource.MIC)
-            setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
-            setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
+        try {
+            recorder = MediaRecorder(context).apply {
+                setAudioSource(MediaRecorder.AudioSource.MIC)
+                setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
+                setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
 
-            // zapis do "pustki", bo ważna jest tylko amplituda
-            setOutputFile(File(context.cacheDir, "temp_audio.3gp").path)
+                // zapis do "pustki", bo ważna jest tylko amplituda
+                setOutputFile(File(context.cacheDir, "temp_audio.3gp").path)
 
-            try {
                 prepare()
                 start()
-            } catch (e: Exception) {
-                e.printStackTrace()
             }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            recorder = null
         }
     }
 
