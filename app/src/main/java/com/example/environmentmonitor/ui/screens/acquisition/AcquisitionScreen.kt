@@ -11,6 +11,9 @@ import java.util.Locale
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import android.Manifest
+import androidx.camera.view.LifecycleCameraController
+import androidx.compose.ui.platform.LocalContext
+import com.example.environmentmonitor.ui.components.CameraPreview
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
@@ -19,6 +22,8 @@ fun AcquisitionScreen(
     viewModel: AcquisitionViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
+    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
 
     // definicja uprawnień
     val permissionsState = rememberMultiplePermissionsState(
@@ -28,6 +33,13 @@ fun AcquisitionScreen(
             Manifest.permission.CAMERA
         )
     )
+
+    // inicjalizacja kontrolera kamery
+    val cameraController = remember {
+        LifecycleCameraController(context).apply {
+            bindToLifecycle(lifecycleOwner)
+        }
+    }
 
     // automatyczne żądanie uprawnień przy wejściu (tylko raz)
     LaunchedEffect(Unit) {
@@ -56,7 +68,7 @@ fun AcquisitionScreen(
                     .padding(padding)
                     .padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(20.dp)
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 // karta Hałasu
                 Card(modifier = Modifier.fillMaxWidth()) {
@@ -78,12 +90,29 @@ fun AcquisitionScreen(
                     }
                 }
 
+                // karta podglądu z kamery
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(250.dp),
+                    shape = MaterialTheme.shapes.medium,
+                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                ) {
+                    CameraPreview(
+                        controller = cameraController,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
+
                 Spacer(modifier = Modifier.weight(1f))
 
                 Button(
                     onClick = {
-                        viewModel.saveMeasurement("Pomiar")
-                        onNavigateBack()
+                        //  zapis zdjęcia przed zapisem rekordu
+                        viewModel.takePhoto(cameraController) {
+                            viewModel.saveMeasurement("Pomiar z sensora")
+                            onNavigateBack()
+                        }
                     },
                     modifier = Modifier.fillMaxWidth()
                 ) {
@@ -91,7 +120,7 @@ fun AcquisitionScreen(
                 }
             }
         } else {
-            // uI dla braku uprawnień
+            // UI dla braku uprawnień
             Box(
                 Modifier
                     .fillMaxSize()

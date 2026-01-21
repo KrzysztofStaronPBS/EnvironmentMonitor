@@ -5,6 +5,7 @@ import androidx.room.Room
 import com.example.environmentmonitor.data.local.AppDatabase
 import com.example.environmentmonitor.data.local.MeasurementDao
 import com.example.environmentmonitor.data.sensor.AudioMeter
+import com.example.environmentmonitor.data.sensor.CameraManager
 import com.example.environmentmonitor.data.sensor.LocationClient
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -45,5 +46,11 @@ object AppModule {
     @Singleton
     fun provideAudioMeter(app: Application): AudioMeter {
         return AudioMeter(app)
+    }
+
+    @Provides
+    @Singleton
+    fun provideCameraManager(app: Application): CameraManager {
+        return CameraManager(app)
     }
 }

@@ -1,10 +1,12 @@
 package com.example.environmentmonitor.ui.screens.acquisition
 
+import androidx.camera.view.LifecycleCameraController
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.environmentmonitor.data.local.MeasurementEntity
 import com.example.environmentmonitor.data.repository.MeasurementRepository
 import com.example.environmentmonitor.data.sensor.AudioMeter
+import com.example.environmentmonitor.data.sensor.CameraManager
 import com.example.environmentmonitor.data.sensor.LocationClient
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -19,7 +21,8 @@ import javax.inject.Inject
 class AcquisitionViewModel @Inject constructor(
     private val repository: MeasurementRepository,
     private val locationClient: LocationClient,
-    private val audioMeter: AudioMeter
+    private val audioMeter: AudioMeter,
+    private val cameraManager: CameraManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AcquisitionUiState())
@@ -67,6 +70,16 @@ class AcquisitionViewModel @Inject constructor(
                 note = note
             )
             repository.saveMeasurement(entity)
+        }
+    }
+
+    fun takePhoto(
+        controller: LifecycleCameraController,
+        onComplete: () -> Unit
+    ) {
+        cameraManager.takePhoto(controller) { path ->
+            _uiState.update { it.copy(photoPath = path) }
+            onComplete()
         }
     }
 
