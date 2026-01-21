@@ -21,6 +21,7 @@ import java.util.Locale
 import androidx.core.net.toUri
 import com.example.environmentmonitor.util.FileExporter
 import androidx.compose.material.icons.filled.Email
+import com.example.environmentmonitor.util.DateFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -85,7 +86,10 @@ fun DetailScreen(
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(text = "Szerokość: ${m.latitude}")
                         Text(text = "Długość: ${m.longitude}")
-                        Text(text = "Data: ${m.dateTime}", style = MaterialTheme.typography.bodySmall)
+                        Text(
+                            text = "Data: ${DateFormatter.formatToDisplay(m.dateTime)}",
+                            style = MaterialTheme.typography.bodySmall
+                        )
                     }
                 }
 

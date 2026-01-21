@@ -16,7 +16,7 @@ class FileExporter(private val context: Context) {
         val reportContent = """
             RAPORT POMIARU ŚRODOWISKOWEGO #${measurement.id}
             -------------------------------------------
-            Data: ${measurement.dateTime}
+            Data: ${DateFormatter.formatToDisplay(measurement.dateTime)}
             Poziom hałasu: ${measurement.noiseLevelDb} dB
             Lokalizacja: ${measurement.latitude}, ${measurement.longitude}
             Notatka: ${measurement.note ?: "Brak"}

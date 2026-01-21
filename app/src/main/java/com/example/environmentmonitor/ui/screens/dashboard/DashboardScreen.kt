@@ -12,6 +12,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.example.environmentmonitor.util.DateFormatter
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -49,7 +50,10 @@ fun DashboardScreen(
                         Column(modifier = Modifier.padding(16.dp)) {
                             Text(text = "Pomiar #${measurement.id}", style = MaterialTheme.typography.titleMedium)
                             Text(text = "Hałas: ${String.format(Locale.getDefault(), "%.1f", measurement.noiseLevelDb)} dB")
-                            Text(text = "Data: ${measurement.dateTime}", style = MaterialTheme.typography.bodySmall)
+                            Text(
+                                text = DateFormatter.formatToDisplay(measurement.dateTime),
+                                style = MaterialTheme.typography.bodySmall
+                            )
                         }
                     }
                 }
