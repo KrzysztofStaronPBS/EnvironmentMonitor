@@ -12,6 +12,8 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import android.Manifest
 import androidx.camera.view.LifecycleCameraController
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.ui.platform.LocalContext
 import com.example.environmentmonitor.ui.components.CameraPreview
 
@@ -48,7 +50,19 @@ fun AcquisitionScreen(
 
     // główny UI
     Scaffold(
-        topBar = { TopAppBar(title = { Text("Nowy Pomiar") }) }
+        topBar = {
+            TopAppBar(
+                title = { Text("Nowy Pomiar") },
+                navigationIcon = {
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Cofnij"
+                        )
+                    }
+                }
+            )
+        }
     ) { padding ->
         // sprawdzenie stanu uprawnień
         if (permissionsState.allPermissionsGranted) {

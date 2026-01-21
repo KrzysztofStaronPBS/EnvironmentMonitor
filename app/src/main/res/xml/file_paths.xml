@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths>
+    <cache-path
+        name="my_cache_files"
+        path="." />
+
     <external-path
         name="my_images"
         path="Android/data/com.example.environmentmonitor/files/Pictures" />

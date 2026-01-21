@@ -19,6 +19,8 @@ import coil.compose.AsyncImage
 import java.io.File
 import java.util.Locale
 import androidx.core.net.toUri
+import com.example.environmentmonitor.util.FileExporter
+import androidx.compose.material.icons.filled.Email
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -29,6 +31,7 @@ fun DetailScreen(
 ) {
     val measurement by viewModel.measurement.collectAsState()
     val context = LocalContext.current
+    val exporter = remember { FileExporter(context) }
 
     LaunchedEffect(measurementId) {
         viewModel.loadMeasurement(measurementId)
@@ -103,6 +106,18 @@ fun DetailScreen(
                     Icon(Icons.Default.LocationOn, contentDescription = null)
                     Spacer(Modifier.width(8.dp))
                     Text("Pokaż lokalizację w Mapach")
+                }
+                Button(
+                    onClick = { exporter.sendMeasurementViaEmail(m) },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onTertiaryContainer
+                    )
+                ) {
+                    Icon(Icons.Default.Email, contentDescription = null)
+                    Spacer(Modifier.width(8.dp))
+                    Text("Wyślij raport e-mailem")
                 }
             }
         }
