@@ -2,7 +2,9 @@ package com.example.environmentmonitor.ui.screens.dashboard
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.environmentmonitor.data.mapper.toEntity
 import com.example.environmentmonitor.data.repository.MeasurementRepository
+import com.example.environmentmonitor.domain.model.Measurement
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -32,9 +34,16 @@ class DashboardViewModel @Inject constructor(
             .launchIn(viewModelScope)
     }
 
-    fun deleteMeasurement(measurement: com.example.environmentmonitor.domain.model.Measurement) {
+    fun deleteMeasurement(measurement: Measurement) {
         viewModelScope.launch {
-            // tutaj potrzebny mapper powrotny toEntity()
+            try {
+                // konwersja domeny na encję i usunięcie przez repozytorium
+                repository.deleteMeasurement(measurement.toEntity())
+
+                // Flow w loadMeasurements() automatycznie odświeży listę, bo Room obserwuje zmiany w tabeli
+            } catch (e: Exception) {
+                _uiState.update { it.copy(errorMessage = "Błąd podczas usuwania: ${e.message}") }
+            }
         }
     }
 }

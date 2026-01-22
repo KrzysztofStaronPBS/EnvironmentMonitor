@@ -6,6 +6,7 @@ import com.example.environmentmonitor.data.mapper.toDomain
 import com.example.environmentmonitor.domain.model.Measurement
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -29,6 +30,22 @@ class MeasurementRepositoryImpl @Inject constructor(
     }
 
     override suspend fun deleteMeasurement(measurement: MeasurementEntity) {
+        // czyszczenie systemu plików
+        if (measurement.photoPath.isNotEmpty()) {
+            try {
+                val file = File(measurement.photoPath)
+                if (file.exists()) {
+                    val deleted = file.delete()
+                    if (deleted) {
+                        println("FileExporter: Sukces - usunięto plik: ${measurement.photoPath}")
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+
+        // usunięcie rekordu z bazy danych Room
         dao.deleteMeasurement(measurement)
     }
 }

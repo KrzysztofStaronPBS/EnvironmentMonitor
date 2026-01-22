@@ -18,6 +18,9 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.example.environmentmonitor.util.DateFormatter
 import java.util.Locale
 import androidx.compose.ui.Alignment.Companion.CenterVertically
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.runtime.*
+import com.example.environmentmonitor.domain.model.Measurement
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -28,6 +31,31 @@ fun DashboardScreen(
 ) {
     val state by viewModel.uiState.collectAsState()
 
+    var measurementToDelete by remember { mutableStateOf<Measurement?>(null) }
+
+    // wyświetlanie AlertDialog, gdy wybrano pomiar do usunięcia
+    measurementToDelete?.let { measurement ->
+        AlertDialog(
+            onDismissRequest = { measurementToDelete = null },
+            title = { Text("Potwierdzenie") },
+            text = { Text("Czy na pewno chcesz usunąć pomiar #${measurement.id} wraz z przypisanym zdjęciem?") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        viewModel.deleteMeasurement(measurement)
+                        measurementToDelete = null
+                    }
+                ) {
+                    Text("Usuń", color = MaterialTheme.colorScheme.error)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { measurementToDelete = null }) {
+                    Text("Anuluj")
+                }
+            }
+        )
+    }
 
     Scaffold(
         topBar = { TopAppBar(title = { Text("Historia Pomiarów") }) },
@@ -77,6 +105,14 @@ fun DashboardScreen(
                                         text = DateFormatter.formatToDisplay(measurement.dateTime),
                                         style = MaterialTheme.typography.bodySmall
                                     )
+
+                                    IconButton(onClick = { measurementToDelete = measurement }) {
+                                        Icon(
+                                            imageVector = Icons.Default.Delete,
+                                            contentDescription = "Usuń",
+                                            tint = MaterialTheme.colorScheme.error.copy(alpha = 0.7f)
+                                        )
+                                    }
                                 }
 
                                 Spacer(modifier = Modifier.height(4.dp))
